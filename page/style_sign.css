@@ -1,0 +1,131 @@
+/* Body and Background */
+body {
+    background-color: #E5D2FF; /* Light purple background */
+    font-family: Arial, sans-serif;
+}
+
+/* Container Settings */
+.container {
+    max-width: 400px;
+    width: 100%;
+    margin: 10px auto;
+    padding: 20px;
+    background-color: #FFFFFF;
+    border-radius: 15px; /* Slightly rounded corners */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+/* Header Styling */
+h3 {
+    text-align: center; /* Center-align header text */
+    color: #4B0082; /* Dark purple color */
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Button Styling */
+.btn-primary, .btn-secondary {
+    margin-right: 10px;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 10px;
+    width: auto;
+    border: none;
+    border-radius: 8px; /* Rounded buttons */
+}
+
+.btn-primary {
+    background-color: #007BFF; /* Blue color for primary button */
+    border-color: #007BFF;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #616161;
+    border-color: #616161;
+}
+
+.btn-secondary:hover {
+    background-color: #4d4d4d;
+}
+
+/* Label Styling */
+.form-label {
+    color: #424242;
+    font-weight: bold;
+}
+
+/* Input Fields Styling */
+.form-control {
+    border: 1px solid #b0bec5;
+    border-radius: 10px; /* Rounded corners */
+    background-color: #F3E5FF; /* Light lavender input background */
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+/* Sign Up Link */
+p a {
+    color: #4B0082; /* Dark purple for link */
+    text-decoration: none;
+}
+
+p a:hover {
+    text-decoration: underline;
+}
+
+/* Navbar Styling */
+.navbar-bg {
+    width: 100%;
+    background-color: #F3E5FF; /* Light purple background */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    margin: 10px auto; /* Center the navbar */
+    padding: 5px 15px; /* Padding inside the navbar */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1000px; /* Optional, to center the content and prevent stretching */
+}
+
+.navbar .navbar-brand {
+    font-weight: bold;
+    color: #800080; /* Dark purple color */
+    font-size: 1.2rem;
+    margin-right: 10px;
+}
+
+.navbar .navbar-nav .nav-item .btn {
+    border-radius: 50px; /* Makes buttons fully rounded */
+    padding: 8px 20px; /* Adjust padding for better alignment */
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centers text horizontally and vertically */
+    line-height: normal; /* Reset line height to avoid text misalignment */
+}
+
+.navbar .btn-secondary {
+    background-color: #616161;
+    color: white;
+}
+
+.navbar .btn-primary {
+    background-color: #007BFF;
+    color: white;
+}
+
+.navbar .btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.navbar .btn-secondary:hover {
+    background-color: #4d4d4d;
+}
+
