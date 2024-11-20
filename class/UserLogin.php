@@ -45,7 +45,10 @@ class UserLogin {
             if (password_verify($this->password, $hashedPassword)) {
                 $_SESSION['userid'] = $row['id'];
                 $_SESSION['email'] = $row['email'];
-    
+                
+                // ตรวจสอบว่าไม่มีการแสดงผลก่อนการ Redirect
+                die("Redirecting...");
+                ob_start();
                 header("Location: mail.php");
                 exit;
             } else {
@@ -53,7 +56,7 @@ class UserLogin {
             }
         }
         return false;
-    }    
+    }      
 
     public function logOut(){
         if (session_status() == PHP_SESSION_NONE) {

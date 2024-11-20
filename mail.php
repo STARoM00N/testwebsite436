@@ -1,7 +1,9 @@
 <?php
-session_start(); // Start session
-include_once("asset/header.php");
-include_once("asset/nav_login.php");
+session_start();
+if (!isset($_SESSION['userid'])) {
+    header("Location: signin.php");
+    exit;
+}
 ?>
 
 <link rel="stylesheet" href="page/fds.css">
