@@ -1,46 +1,40 @@
 <?php include_once('asset/header.php'); ?>
 <?php include_once('asset/nav.php'); ?>
-<link rel="stylesheet" href="page\style_sign.css">
+<link rel="stylesheet" href="page/style_sign.css">
 
 <div class="container">
     <h3 class="my-3">Login Page</h3>
 
     <?php
-        include_once("config/Database.php");
-        include_once("class/UserLogin.php");
-        include_once("class/Utils.php");
+    include_once("config/Database.php");
+    include_once("class/UserLogin.php");
+    include_once("class/Utils.php");
 
-        $connectDB = new Database();
-        $db = $connectDB->getConnection();
+    $connectDB = new Database();
+    $db = $connectDB->getConnection();
 
-        $user = new UserLogin($db);
-        $bs = new Bootstrap();
+    $user = new UserLogin($db);
+    $bs = new Bootstrap();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Debugging $_POST values
-            echo "<pre>";
-            print_r($_POST);
-            echo "</pre>";
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        var_dump($_POST); // Debug ข้อมูลที่ส่งมาจากฟอร์ม
 
-            $user->setUsername($_POST['username']);
-            $user->setPassword($_POST['password']);
+        $user->setUsername($_POST['username']);
+        $user->setPassword($_POST['password']);
 
-            // Debugging username and password set
-            echo "Username: " . $user->username . "<br>";
-            echo "Password: " . $user->password . "<br>";
-
-            if ($user->emailNotExists()) {
-                $bs->DisplayAlert("Please check your Username or Password.", "danger");
+        if ($user->emailNotExists()) {
+            $bs->DisplayAlert("User not found. Please check your Username or Password.", "danger");
+        } else {
+            $verifyResult = $user->verifyPassword();
+            if ($verifyResult === true) {
+                echo "<script>alert('Login successful! Redirecting to the dashboard...');</script>";
+                echo "<script>window.location.href = 'mail.php';</script>";
+                exit;
             } else {
-                if ($user->verifyPassword()) {
-                    $bs->DisplayAlert("Login successful!", "success");
-                    header("Location: mail.php");
-                    exit;
-                } else {
-                    $bs->DisplayAlert("Please check your Username or Password.", "danger");
-                }
+                $bs->DisplayAlert("Incorrect password. Please try again.", "danger");
             }
         }
+    }
     ?>
 
     <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="POST">
