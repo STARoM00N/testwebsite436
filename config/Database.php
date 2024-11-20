@@ -11,10 +11,10 @@ class Database {
 
         try {
             $this->conn = new PDO(
-                "sqlsrv:server=$this->host;Database=$this->db;ConnectionPooling=0;LoginTimeout=30",
+                "sqlsrv:server=$this->host;Database=$this->db;ConnectionTimeout=30",
                 $this->username,
                 $this->password
-            );            
+            );                      
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             echo "Connection successful!";
         } catch (PDOException $e) {

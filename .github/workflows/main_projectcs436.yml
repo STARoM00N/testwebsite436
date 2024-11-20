@@ -24,6 +24,5 @@ jobs:
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
-        app-name: "LTCHProjects436" # ชื่อ Web App ใน Azure
+        app-name: "LTCHProjects436"  # ชื่อแอปใน Azure
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: .
