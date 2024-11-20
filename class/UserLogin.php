@@ -47,11 +47,9 @@ class UserLogin {
                 header("Location: mail.php"); // เปลี่ยนเส้นทางไปยังหน้าหลักหลังล็อกอินสำเร็จ
                 exit;
             } else {
-                echo "<script>alert('Incorrect username or password.');</script>";
                 return false;
             }
         } else {
-            echo "<script>alert('Incorrect username or password.');</script>";
             return false;
         }
     }         
