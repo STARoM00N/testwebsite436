@@ -20,48 +20,44 @@ class UserLogin {
     }
 
     public function emailNotExists() {
-        $query = "SELECT TOP 1 id FROM {$this->table_name} WHERE username COLLATE SQL_Latin1_General_CP1_CI_AS = :username";
+        $query = "SELECT TOP 1 id FROM {$this->table_name} WHERE LOWER(username) = LOWER(:username)";
         $stmt = $this->conn->prepare($query);
+        $this->username = trim($this->username); // ตัดช่องว่างด้านหน้าและหลัง
         $stmt->bindParam(":username", $this->username);
         $stmt->execute();
-
+    
         return $stmt->rowCount() == 0;
     }
+    
 
     public function verifyPassword() {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
         
-        // Query with case-insensitive username comparison
-        $query = "SELECT TOP 1 id, password 
-                  FROM {$this->table_name} 
-                  WHERE username COLLATE SQL_Latin1_General_CP1_CI_AS = :username";
+        $query = "SELECT TOP 1 id, password FROM {$this->table_name} WHERE LOWER(username) = LOWER(:username)";
         $stmt = $this->conn->prepare($query);
+        $this->username = trim($this->username); // ตัดช่องว่างด้านหน้าและหลัง
         $stmt->bindParam(":username", $this->username);
         $stmt->execute();
-
-        // Debugging to check if query executed successfully
+    
         if ($stmt->rowCount() == 1) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $hashedPassword = $row['password'];
-
-            // Debugging to check fetched data
-            echo "<script>console.log('Fetched Hashed Password: {$hashedPassword}');</script>";
-
+    
             if (password_verify($this->password, $hashedPassword)) {
                 $_SESSION['userid'] = $row['id'];
-                header("Location: mail.php"); // Redirect to main page after successful login
+                header("Location: mail.php");
                 exit;
             } else {
-                echo "<script>alert('Invalid Password!');</script>";
+                echo "<script>alert('Incorrect password.');</script>";
                 return false;
             }
         } else {
-            echo "<script>alert('User not found!');</script>";
+            echo "<script>alert('User not found.');</script>";
             return false;
         }
-    }
+    }    
 
     public function logOut() {
         if (session_status() == PHP_SESSION_NONE) {
