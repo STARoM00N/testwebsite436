@@ -56,36 +56,30 @@ class UserRegister {
             return false;
         }
     
-        $query = "INSERT INTO {$this->table_name} (Username, Email, Password, `First Name`, `Last Name`) 
-                  VALUES (:username, :email, :password, :fname, :lname)";
+        $query = "INSERT INTO {$this->table_name} 
+          (Username, Email, Password, [First Name], [Last Name]) 
+          VALUES (:username, :email, :password, :fname, :lname)";
         $stmt = $this->conn->prepare($query);
-    
-        $this->username = htmlspecialchars(strip_tags($this->username));
-        $this->email = htmlspecialchars(strip_tags($this->email));
-        $this->password = htmlspecialchars(strip_tags($this->password));
-        $this->fname = htmlspecialchars(strip_tags($this->fname));
-        $this->lname = htmlspecialchars(strip_tags($this->lname));
-    
+
         $hashedPassword = password_hash($this->password, PASSWORD_DEFAULT);
-    
+
         $stmt->bindParam(":username", $this->username);
         $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":password", $hashedPassword);
         $stmt->bindParam(":fname", $this->fname);
         $stmt->bindParam(":lname", $this->lname);
-    
+
         try {
             if ($stmt->execute()) {
-                echo "<script>alert('User created successfully. Redirecting to signin page...');</script>";
                 header("Location: signin.php");
                 exit;
             } else {
-                echo "<script>alert('Failed to create user. Please try again.');</script>";
+                throw new Exception("Unable to execute query");
             }
         } catch (PDOException $e) {
-            echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
-            return false;
+            echo "<div class='alert alert-danger' role='alert'>Failed to create user: {$e->getMessage()}</div>";
         }
+
     }    
 
     public function checkEmail() {
