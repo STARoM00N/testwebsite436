@@ -1,9 +1,10 @@
+
 <?php
 class Database {
-    private $host = "tcp:prohtectcs436database.database.windows.net,1433"; // ชื่อเซิร์ฟเวอร์
-    private $db = "ProjectCS436"; // ชื่อฐานข้อมูล
-    private $username = "projectcs436"; // ชื่อผู้ใช้
-    private $password = ".cs436team"; // รหัสผ่าน
+    private $host = "tcp:prohectcs436database.database.windows.net,1433"; // Database server name
+    private $db = "ProjectCS436"; // Database name
+    private $username = "projectcs436"; // Username
+    private $password = ".cs436team"; // Password
     public $conn;
 
     public function getConnection() {
@@ -11,11 +12,14 @@ class Database {
 
         try {
             $this->conn = new PDO(
-                "sqlsrv:server=$this->host;Database=$this->db;ConnectionTimeout=30",
+                "sqlsrv:server=$this->host;Database=$this->db",
                 $this->username,
-                $this->password
-            );                      
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $this->password,
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_TIMEOUT => 60 // Set timeout to 60 seconds
+                ]
+            );
             echo "Connection successful!";
         } catch (PDOException $e) {
             echo "Connection Error: " . $e->getMessage();
@@ -25,7 +29,7 @@ class Database {
     }
 }
 
-// ทดสอบการเชื่อมต่อ
+// Testing database connection
 $db = new Database();
 $conn = $db->getConnection();
 ?>
