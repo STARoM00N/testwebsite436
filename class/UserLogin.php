@@ -28,12 +28,12 @@ class UserLogin {
         return $stmt->rowCount() == 0;
     }
 
-    public function verifyPassword(){
+    public function verifyPassword() {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
         
-        $query = "SELECT TOP 1 id, password, email FROM {$this->table_name} WHERE username = :username";
+        $query = "SELECT id, password FROM {$this->table_name} WHERE username = :username LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
         $stmt->execute();
@@ -44,19 +44,17 @@ class UserLogin {
     
             if (password_verify($this->password, $hashedPassword)) {
                 $_SESSION['userid'] = $row['id'];
-                $_SESSION['email'] = $row['email'];
-                
-                // ตรวจสอบว่าไม่มีการแสดงผลก่อนการ Redirect
-                die("Redirecting...");
-                ob_start();
-                header("Location: mail.php");
+                header("Location: mail.php"); // เปลี่ยนเส้นทางไปยังหน้าหลักหลังล็อกอินสำเร็จ
                 exit;
             } else {
+                echo "<script>alert('Incorrect username or password.');</script>";
                 return false;
             }
+        } else {
+            echo "<script>alert('Incorrect username or password.');</script>";
+            return false;
         }
-        return false;
-    }      
+    }         
 
     public function logOut(){
         if (session_status() == PHP_SESSION_NONE) {
