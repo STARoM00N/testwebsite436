@@ -89,7 +89,7 @@ class UserRegister {
     }    
 
     public function checkEmail() {
-        $query = "SELECT * FROM {$this->table_name} WHERE Email = :email LIMIT 1";
+        $query = "SELECT TOP 1 * FROM {$this->table_name} WHERE Email = :email";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':email', $this->email);
         $stmt->execute();
