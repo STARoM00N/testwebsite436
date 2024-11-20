@@ -1,6 +1,5 @@
 <?php
-session_start(); // เริ่มต้น session ที่นี่
-
+session_start(); // Start session
 include_once("asset/header.php");
 include_once("asset/nav_login.php");
 ?>
@@ -10,9 +9,9 @@ include_once("asset/nav_login.php");
 <body onload="showContent('startup')">
 
     <?php
-        // ตรวจสอบว่า session userid ถูกตั้งค่าแล้วหรือไม่
+        // Verify session user ID
         if (!isset($_SESSION['userid'])) {
-            header("Location: page/signin.php"); // หากยังไม่ได้ล็อกอิน ให้เปลี่ยนเส้นทางไปยังหน้า signin.php
+            header("Location: signin.php");
             exit;
         }
 
@@ -28,9 +27,9 @@ include_once("asset/nav_login.php");
             $userid = $_SESSION['userid'];
             $userData = $user->userData($userid);
             
-            // แสดงข้อมูลผู้ใช้
+            // Display user data
             if ($userData) {
-                echo "Welcome, " . htmlspecialchars($userData['Username']); // ตัวอย่างการแสดงชื่อผู้ใช้
+                echo "Welcome, " . htmlspecialchars($userData['Username']);
             } else {
                 echo "User not found.";
             }
@@ -62,17 +61,15 @@ include_once("asset/nav_login.php");
                         <input type="text" id="search-input" onkeyup="filterMessages()" placeholder="Search by email..." />
                     </div>
                     <div id="messages-container">
-                        <!-- เนื้อหาของกล่องข้อความจะแสดงที่นี่ -->
+                        <!-- Messages will load here -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ปุ่มสีเขียวที่มุมขวาล่าง -->
     <div class="add-button" onclick="openPopup()">+</div>
 
-    <!-- Popup Form -->
     <div id="popupForm" class="popup-form">
         <div class="popup-content">
             <span class="close-button" onclick="closePopup()">&times;</span>
@@ -95,7 +92,7 @@ include_once("asset/nav_login.php");
     <script>
         function showContent(type) {
             const contentDisplay = document.getElementById('content-display');
-            contentDisplay.innerHTML = ''; // ล้างเนื้อหาเก่าออกก่อนโหลดเนื้อหาใหม่
+            contentDisplay.innerHTML = ''; 
 
             switch (type) {
                 case 'startup':
@@ -109,11 +106,11 @@ include_once("asset/nav_login.php");
                                 <input type="text" id="search-input" onkeyup="filterMessages()" placeholder="Search by email..." />
                             </div>
                             <div id="messages-container">
-                                <!-- เนื้อหาของกล่องข้อความจะแสดงที่นี่ -->
+                                <!-- Messages will load here -->
                             </div>
                         </div>
                     `;
-                    setTimeout(fetchMessageContent, 0); // รอให้ messages-container โหลดก่อนเรียก fetchMessageContent
+                    setTimeout(fetchMessageContent, 0); 
                     break;
                 case 'chat':
                     contentDisplay.innerHTML = '<h2>Chat Content</h2>';
@@ -140,8 +137,7 @@ include_once("asset/nav_login.php");
             fetch('asset/fetch_message.php')
                 .then(response => response.text())
                 .then(data => {
-                    console.log("Data received:", data); // ตรวจสอบข้อมูลที่ได้รับใน console
-                    messagesContainer.innerHTML = data; // ใส่ข้อมูลที่ดึงมาใน messages-container
+                    messagesContainer.innerHTML = data;
                 })
                 .catch(error => console.error('Error fetching message content:', error));
         }
@@ -161,7 +157,6 @@ include_once("asset/nav_login.php");
                     .then(data => {
                         if (data === 'success') {
                             alert('Mail deleted successfully');
-                            // ลบ mail item ออกจาก DOM โดยไม่ต้องรีเฟรชหน้า
                             const mailItem = document.getElementById(`mail-item-${mail_id}`);
                             if (mailItem) {
                                 mailItem.remove();
@@ -182,45 +177,26 @@ include_once("asset/nav_login.php");
             messages.forEach(message => {
                 const email = message.querySelector('.message-content h3').innerText.toLowerCase();
                 if (email.includes(filter)) {
-                    message.style.display = ""; // แสดงเมลที่ตรงกับการค้นหา
+                    message.style.display = "";
                 } else {
-                    message.style.display = "none"; // ซ่อนเมลที่ไม่ตรงกับการค้นหา
+                    message.style.display = "none";
                 }
             });
         }
+
         function showMailContent(mail_id) {
             fetch(`asset/get_mail_content.php?id=${mail_id}`)
                 .then(response => response.text())
                 .then(data => {
                     const contentDisplay = document.getElementById('content-display');
-                    contentDisplay.innerHTML = data; // แสดงเนื้อหาของอีเมลใน content-display
+                    contentDisplay.innerHTML = data;
                 })
                 .catch(error => console.error('Error fetching mail content:', error));
         }
 
         document.getElementById("emailForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // ป้องกันการส่งฟอร์มแบบปกติ
+            event.preventDefault();
 
-            // ดึงข้อมูลจากแต่ละช่องกรอก
-            const to = document.getElementById("to").value.trim();
-            const subject = document.getElementById("subject").value.trim();
-            const message = document.getElementById("message").value.trim();
-
-            // ตรวจสอบว่าแต่ละช่องมีการกรอกข้อมูลหรือไม่
-            if (!to) {
-                alert("Please enter the recipient's email.");
-                return;
-            }
-            if (!subject) {
-                alert("Please enter the subject.");
-                return;
-            }
-            if (!message) {
-                alert("Please enter the message.");
-                return;
-            }
-
-            // หากข้อมูลครบแล้ว ส่งฟอร์ม
             const formData = new FormData(this);
 
             fetch('asset/send_email.php', {  
@@ -229,18 +205,13 @@ include_once("asset/nav_login.php");
             })
             .then(response => response.text())
             .then(data => {
-                if (data.includes("Error")) { // ถ้ามีข้อความ Error
-                    alert(data); // แสดงข้อความข้อผิดพลาด
-                } else {
-                    alert(data); // แสดงข้อความสำเร็จ
-                    closePopup(); // ปิด Popup หลังจากส่งข้อความสำเร็จ
-                    document.getElementById("emailForm").reset(); // รีเซ็ตฟอร์มหลังจากส่งเสร็จ
-                }
+                alert(data);
+                closePopup();
+                document.getElementById("emailForm").reset();
             })
             .catch(error => console.error('Error:', error));
         });
     </script>
-
 </body>
 
-<?php include_once("asset/footer.php"); ?> 
+<?php include_once("asset/footer.php"); ?>

@@ -67,13 +67,13 @@ function validateSignupForm() {
                 } elseif (!$user->checkPasswordLength()) {
                     $bs->DisplayAlert("Password must be at least 6 characters long.", "danger");
                 } elseif ($user->createUser()) {
+                    $bs->DisplayAlert("User created successfully.", "success");
                 } else {
                     $bs->DisplayAlert("Failed to create user. Please check your input or try again later.", "danger");
                 }
             }
         ?>
 
-        <!-- ฟอร์มการสมัครสมาชิก -->
         <form name="signupForm" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'])?>" method="POST" onsubmit="return validateSignupForm()">
             <div class="mb-3">
                 <label for="email address" class="form-label">Email Address</label>
@@ -100,7 +100,7 @@ function validateSignupForm() {
                 <input type="text" name="last_name" class="form-control" aria-describedby="last name" placeholder="Enter your last name">
             </div>
             <a href="index.php" class="btn btn-secondary">Go Back</a>
-            <button type="submit" name="signup" class="btn btn-primary">Sign In</button>
+            <button type="submit" name="signup" class="btn btn-primary">Sign Up</button>
         </form>
         <p class="mt-3">Already have an account? Let <a href="signin.php">Sign In!</a></p>
     </div>

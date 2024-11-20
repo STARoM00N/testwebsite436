@@ -76,25 +76,4 @@ class UserRegister{
         try {
             if ($stmt->execute()) {
                 echo "<div class='alert alert-success' role='alert'>User created successfully.</div>";
-                return true;
-            } else {
-                $errorInfo = $stmt->errorInfo();
-                echo "<div class='alert alert-danger' role='alert'>Failed to create user: " . $errorInfo[2] . "</div>";
-                return false;
-            }
-        } catch (PDOException $e) {
-            echo "<div class='alert alert-danger' role='alert'>Exception occurred: " . $e->getMessage() . "</div>";
-            return false;
-        }
-    }
-
-    public function checkEmail() {
-        $query = "SELECT * FROM {$this->table_name} WHERE Email = :email LIMIT 1";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':email', $this->email);
-        $stmt->execute();
-        return $stmt->rowCount() === 0;
-    }
-}
-
-?>
+                retu

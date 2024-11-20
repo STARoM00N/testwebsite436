@@ -78,6 +78,5 @@ class UserLogin {
             return false;
         }
     }
-    
 }
 ?>
