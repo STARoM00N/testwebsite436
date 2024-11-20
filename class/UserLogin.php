@@ -23,16 +23,20 @@ class UserLogin {
         $query = "SELECT id FROM {$this->table_name} WHERE username = :username";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
-        $stmt->execute();
-
-        // Debugging
+    
+        if (!$stmt->execute()) {
+            // Debugging Error
+            var_dump($stmt->errorInfo());
+            die("Query failed.");
+        }
+    
         var_dump([
             'username' => $this->username,
             'row_count' => $stmt->rowCount()
         ]);
-
+    
         return $stmt->rowCount() == 0; // ถ้าไม่มีผลลัพธ์ -> username ไม่พบ
-    }
+    }    
 
     public function verifyPassword() {
         if (session_status() == PHP_SESSION_NONE) {
