@@ -10,7 +10,9 @@ $user = new UserLogin($db);
 $bs = new Bootstrap();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    var_dump($_POST); 
+    // Debugging data from form
+    var_dump($_POST);
+
     $user->setUsername($_POST['username']);
     $user->setPassword($_POST['password']);
 
@@ -27,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-
 ?>
 
 <div class="container">
