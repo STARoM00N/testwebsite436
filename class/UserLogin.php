@@ -32,29 +32,29 @@ class UserLogin {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
-        
+    
         $query = "SELECT TOP 1 id, password FROM {$this->table_name} WHERE username = :username";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
         $stmt->execute();
-
-        if ($stmt->rowCount() > 0) {
+    
+        if ($stmt->rowCount() == 1) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $hashedPassword = $row['password'];
-
+    
             if (password_verify($this->password, $hashedPassword)) {
                 $_SESSION['userid'] = $row['id'];
                 header("Location: mail.php");
                 exit;
             } else {
-                echo "<script>alert('Incorrect password!');</script>";
+                echo "<script>alert('Incorrect password.');</script>";
                 return false;
             }
         } else {
-            echo "<script>alert('User not found!');</script>";
+            echo "<script>alert('User not found.');</script>";
             return false;
         }
-    }         
+    }            
 
     public function logOut() {
         if (session_status() == PHP_SESSION_NONE) {
