@@ -33,7 +33,7 @@ class UserLogin {
             session_start();
         }
         
-        $query = "SELECT id, password FROM {$this->table_name} WHERE username = :username LIMIT 1";
+        $query = "SELECT TOP 1 id, password FROM {$this->table_name} WHERE username = :username";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
         $stmt->execute();
