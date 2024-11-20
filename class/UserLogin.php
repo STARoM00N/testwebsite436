@@ -20,11 +20,10 @@ class UserLogin {
     }
 
     public function emailNotExists() {
-        $query = "SELECT TOP 1 id FROM {$this->table_name} WHERE username = :username";
+        $query = "SELECT id FROM {$this->table_name} WHERE LOWER(username) = LOWER(:username)";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
         $stmt->execute();
-
         return $stmt->rowCount() == 0;
     }
 
@@ -32,31 +31,35 @@ class UserLogin {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
-    
-        $query = "SELECT TOP 1 id, password FROM {$this->table_name} WHERE username = :username";
+
+        $query = "SELECT id, password FROM {$this->table_name} WHERE LOWER(username) = LOWER(:username)";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
         $stmt->execute();
-    
+
         if ($stmt->rowCount() == 1) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $hashedPassword = $row['password'];
-    
+
+            // Debugging values
+            var_dump($hashedPassword);
+            var_dump(password_verify($this->password, $hashedPassword));
+
             if (password_verify($this->password, $hashedPassword)) {
                 $_SESSION['userid'] = $row['id'];
                 header("Location: mail.php");
                 exit;
             } else {
-                echo "<script>alert('Incorrect password.');</script>";
+                echo "<script>alert('Invalid username or password.');</script>";
                 return false;
             }
         } else {
             echo "<script>alert('User not found.');</script>";
             return false;
         }
-    }            
+    }
 
-    public function logOut() {
+    public function logOut(){
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
@@ -64,14 +67,14 @@ class UserLogin {
         unset($_SESSION['email']);
         header("Location: signin.php");
         exit;
-    }    
+    }
 
     public function userData($userid) {
         $query = "SELECT * FROM {$this->table_name} WHERE id = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":id", $userid);
         $stmt->execute();
-    
+
         if ($stmt->rowCount() > 0) {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             return $user;

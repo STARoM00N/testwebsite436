@@ -16,15 +16,26 @@
         $user = new UserLogin($db);
         $bs = new Bootstrap();
 
-        if (isset($_POST['signin'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Debugging $_POST values
+            echo "<pre>";
+            print_r($_POST);
+            echo "</pre>";
+
             $user->setUsername($_POST['username']);
             $user->setPassword($_POST['password']);
+
+            // Debugging username and password set
+            echo "Username: " . $user->username . "<br>";
+            echo "Password: " . $user->password . "<br>";
 
             if ($user->emailNotExists()) {
                 $bs->DisplayAlert("Please check your Username or Password.", "danger");
             } else {
                 if ($user->verifyPassword()) {
-                    # User logged in successfully
+                    $bs->DisplayAlert("Login successful!", "success");
+                    header("Location: mail.php");
+                    exit;
                 } else {
                     $bs->DisplayAlert("Please check your Username or Password.", "danger");
                 }
@@ -35,11 +46,11 @@
     <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="POST">
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
-            <input type="text" name="username" class="form-control" aria-describedby="username">
+            <input type="text" name="username" class="form-control" aria-describedby="username" required>
         </div>
         <div class="mb-3">
             <label for="password" class="form-label">Password</label>
-            <input type="password" name="password" class="form-control" aria-describedby="password">
+            <input type="password" name="password" class="form-control" aria-describedby="password" required>
         </div>
         <a href="index.php" class="btn btn-secondary form-button">Go Back</a>
         <button type="submit" name="signin" class="btn btn-primary form-button">Sign In</button>
