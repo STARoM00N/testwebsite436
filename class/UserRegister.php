@@ -35,7 +35,7 @@ class UserRegister {
     }
 
     public function checkUsername() {
-        $query = "SELECT TOP 1 * FROM {$this->table_name} WHERE Username = :username";
+        $query = "SELECT TOP 1 * FROM {$this->table_name} WHERE username = :username";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':username', $this->username);
         $stmt->execute();
@@ -55,14 +55,14 @@ class UserRegister {
             echo "<script>alert('Validation failed. Check your input values.');</script>";
             return false;
         }
-
+    
         $query = "INSERT INTO {$this->table_name} 
-          (Username, Email, Password, [FirstName], [LastName]) 
+          (Username, Email, Password, FirstName, LastName) 
           VALUES (:username, :email, :password, :fname, :lname)";
         $stmt = $this->conn->prepare($query);
-
+    
         $hashedPassword = password_hash($this->password, PASSWORD_DEFAULT);
-
+    
         $stmt->bindParam(":username", $this->username);
         $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":password", $hashedPassword);
@@ -71,24 +71,19 @@ class UserRegister {
 
         try {
             if ($stmt->execute()) {
-                echo "<script>
-                        alert('User created successfully! Redirecting to login page...');
-                        window.location.href = 'signin.php';
-                      </script>";
-                return true;
+                echo "<script>alert('User created successfully! Redirecting to login page...');</script>";
+                echo "<script>window.location.href = 'signin.php';</script>";
+                exit;
             } else {
                 throw new Exception("Unable to execute query");
             }
         } catch (PDOException $e) {
             echo "<div class='alert alert-danger' role='alert'>Failed to create user: {$e->getMessage()}</div>";
-        } catch (Exception $e) {
-            error_log("General Error: " . $e->getMessage());
-            echo "<script>alert('An unexpected error occurred. Please try again later.');</script>";
         }
     }
 
     public function checkEmail() {
-        $query = "SELECT TOP 1 * FROM {$this->table_name} WHERE Email = :email";
+        $query = "SELECT TOP 1 * FROM {$this->table_name} WHERE email = :email";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':email', $this->email);
         $stmt->execute();
