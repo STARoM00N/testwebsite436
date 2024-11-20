@@ -10,21 +10,16 @@ class Database {
         $this->conn = null;
 
         try {
-            $this->conn = new PDO(
-                "sqlsrv:server=$this->host;Database=$this->db",
-                $this->username,
-                $this->password
-            );
+            $dsn = "sqlsrv:server=$this->host;Database=$this->db_name";
+            $this->conn = new PDO($dsn, $this->username, $this->password);
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            echo "Connection Error: " . $e->getMessage();
+            echo "Database connected successfully."; // Debugging
+        } catch (PDOException $exception) {
+            echo "Connection error: " . $exception->getMessage();
         }
 
         return $this->conn;
     }
 }
 
-// ทดสอบการเชื่อมต่อ
-$db = new Database();
-$conn = $db->getConnection();
 ?>
