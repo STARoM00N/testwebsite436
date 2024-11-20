@@ -57,7 +57,7 @@ class UserRegister {
         }
     
         $query = "INSERT INTO {$this->table_name} 
-          (Username, Email, Password, [First Name], [Last Name]) 
+          (Username, Email, Password, [FirstName], [LastName]) 
           VALUES (:username, :email, :password, :fname, :lname)";
         $stmt = $this->conn->prepare($query);
 
