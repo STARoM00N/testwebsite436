@@ -20,7 +20,7 @@ class UserLogin {
     }
 
     public function emailNotExists() {
-        $query = "SELECT TOP 1 id FROM {$this->table_name} WHERE username = :username";
+        $query = "SELECT TOP 1 id FROM {$this->table_name} WHERE username COLLATE SQL_Latin1_General_CP1_CI_AS = :username";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
         $stmt->execute();
@@ -33,28 +33,37 @@ class UserLogin {
             session_start();
         }
         
-        $query = "SELECT TOP 1 id, password FROM {$this->table_name} WHERE username = :username";
+        // Query with case-insensitive username comparison
+        $query = "SELECT TOP 1 id, password 
+                  FROM {$this->table_name} 
+                  WHERE username COLLATE SQL_Latin1_General_CP1_CI_AS = :username";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
         $stmt->execute();
-    
+
+        // Debugging to check if query executed successfully
         if ($stmt->rowCount() == 1) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $hashedPassword = $row['password'];
-    
+
+            // Debugging to check fetched data
+            echo "<script>console.log('Fetched Hashed Password: {$hashedPassword}');</script>";
+
             if (password_verify($this->password, $hashedPassword)) {
                 $_SESSION['userid'] = $row['id'];
-                header("Location: mail.php"); // เปลี่ยนเส้นทางไปยังหน้าหลักหลังล็อกอินสำเร็จ
+                header("Location: mail.php"); // Redirect to main page after successful login
                 exit;
             } else {
+                echo "<script>alert('Invalid Password!');</script>";
                 return false;
             }
         } else {
+            echo "<script>alert('User not found!');</script>";
             return false;
         }
-    }         
+    }
 
-    public function logOut(){
+    public function logOut() {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
@@ -62,7 +71,7 @@ class UserLogin {
         unset($_SESSION['email']);
         header("Location: signin.php");
         exit;
-    }    
+    }
 
     public function userData($userid) {
         $query = "SELECT * FROM {$this->table_name} WHERE id = :id";
