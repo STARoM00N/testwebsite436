@@ -15,7 +15,6 @@ class UserRegister{
         $this->conn = $db;
     }
 
-    // การตั้งค่าข้อมูลต่าง ๆ
     public function setFName($fname){ $this->fname = $fname; }
     public function setLName($lname){ $this->lname = $lname; }
     public function setEmail($email){ $this->email = $email; }
@@ -23,22 +22,18 @@ class UserRegister{
     public function setConfirmPassword($confirm_password){ $this->confirm_password = $confirm_password; }
     public function setUsername($username){ $this->username = $username; }
 
-    // ตรวจสอบว่าใส่รหัสผ่านตรงกัน
     public function validatePassword(){
         return $this->password === $this->confirm_password;
     }
 
-    // ตรวจสอบความยาวรหัสผ่าน
     public function checkPasswordLength(){
         return strlen($this->password) >= 6;
     }
 
-    // ตรวจสอบรูปแบบอีเมล
     public function validateEmailFormat(){
         return filter_var($this->email, FILTER_VALIDATE_EMAIL) !== false;
     }
 
-    // ตรวจสอบชื่อผู้ใช้ไม่ซ้ำกัน
     public function checkUsername(){
         $query = "SELECT * FROM {$this->table_name} WHERE Username = :username LIMIT 1";
         $stmt = $this->conn->prepare($query);
@@ -47,7 +42,6 @@ class UserRegister{
         return $stmt->rowCount() === 0;
     }
 
-    // ตรวจสอบเงื่อนไขการสมัคร
     public function validateUserInput(){
         return $this->checkPasswordLength() &&
                $this->validatePassword() &&
@@ -94,7 +88,6 @@ class UserRegister{
         }
     }
 
-    // ตรวจสอบอีเมลไม่ซ้ำกัน
     public function checkEmail() {
         $query = "SELECT * FROM {$this->table_name} WHERE Email = :email LIMIT 1";
         $stmt = $this->conn->prepare($query);
@@ -102,7 +95,6 @@ class UserRegister{
         $stmt->execute();
         return $stmt->rowCount() === 0;
     }
-   
 }
 
 ?>

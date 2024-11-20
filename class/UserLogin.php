@@ -33,7 +33,6 @@ class UserLogin {
             session_start();
         }
         
-        // เพิ่มการดึงข้อมูล email จากฐานข้อมูล
         $query = "SELECT id, password, email FROM {$this->table_name} WHERE username = :username LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
@@ -45,7 +44,7 @@ class UserLogin {
     
             if (password_verify($this->password, $hashedPassword)) {
                 $_SESSION['userid'] = $row['id'];
-                $_SESSION['email'] = $row['email']; // เก็บอีเมลจริงของผู้ใช้ใน session
+                $_SESSION['email'] = $row['email'];
     
                 header("Location: mail.php");
                 exit;
@@ -61,7 +60,7 @@ class UserLogin {
             session_start();
         }
         unset($_SESSION['userid']);
-        unset($_SESSION['email']); // ลบอีเมลออกจาก session ด้วย
+        unset($_SESSION['email']);
         header("Location: signin.php");
         exit;
     }    
