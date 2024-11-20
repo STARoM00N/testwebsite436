@@ -19,10 +19,11 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.1' # กำหนด PHP เวอร์ชันที่ใช้งาน
+        php-version: '8.1' # เลือก PHP เวอร์ชันที่เหมาะสม
 
-    - name: Install Dependencies
-      run: composer install # ติดตั้ง dependencies (ถ้าใช้ Composer)
+    # ลบขั้นตอน Install Dependencies ถ้าไม่ใช้ Composer
+    # - name: Install Dependencies
+    #   run: composer install
 
     - name: Deploy to Azure
       uses: Azure/webapps-deploy@v2
