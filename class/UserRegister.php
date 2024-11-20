@@ -35,7 +35,7 @@ class UserRegister{
     }
 
     public function checkUsername(){
-        $query = "SELECT * FROM {$this->table_name} WHERE Username = :username LIMIT 1";
+        $query = "SELECT TOP 1 * FROM {$this->table_name} WHERE Username = :username";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':username', $this->username);
         $stmt->execute();
@@ -76,4 +76,9 @@ class UserRegister{
         try {
             if ($stmt->execute()) {
                 echo "<div class='alert alert-success' role='alert'>User created successfully.</div>";
-                retu
+                return
+            }
+        }
+    }
+}
+?>
