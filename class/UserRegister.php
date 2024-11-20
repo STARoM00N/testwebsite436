@@ -55,10 +55,10 @@ class UserRegister {
             echo "<script>alert('Validation failed. Check your input values.');</script>";
             return false;
         }
-    
+
         $query = "INSERT INTO {$this->table_name} 
-          (Username, Email, Password, [FirstName], [LastName]) 
-          VALUES (:username, :email, :password, :fname, :lname)";
+                  (Username, Email, Password, [FirstName], [LastName]) 
+                  VALUES (:username, :email, :password, :fname, :lname)";
         $stmt = $this->conn->prepare($query);
 
         $hashedPassword = password_hash($this->password, PASSWORD_DEFAULT);
@@ -71,16 +71,22 @@ class UserRegister {
 
         try {
             if ($stmt->execute()) {
+                // Redirect to the signin page after successful registration
                 header("Location: signin.php");
                 exit;
             } else {
                 throw new Exception("Unable to execute query");
             }
         } catch (PDOException $e) {
-            echo "<div class='alert alert-danger' role='alert'>Failed to create user: {$e->getMessage()}</div>";
+            // Catch database-specific errors
+            error_log("Database Error: " . $e->getMessage()); // Log error for debugging
+            echo "<script>alert('Database error occurred. Please try again later.');</script>";
+        } catch (Exception $e) {
+            // Catch general PHP errors
+            error_log("General Error: " . $e->getMessage());
+            echo "<script>alert('An unexpected error occurred. Please try again later.');</script>";
         }
-
-    }    
+    }
 
     public function checkEmail() {
         $query = "SELECT TOP 1 * FROM {$this->table_name} WHERE Email = :email";
