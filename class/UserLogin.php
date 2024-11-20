@@ -26,8 +26,10 @@ class UserLogin {
         $stmt->execute();
     
         // Debugging
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         var_dump([
-            'username' => $this->username,
+            'username_input' => $this->username,
+            'query_result' => $result,
             'row_count' => $stmt->rowCount()
         ]);
     
@@ -43,6 +45,13 @@ class UserLogin {
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
         $stmt->execute();
+    
+        // Debugging
+        var_dump([
+            'username_input' => $this->username,
+            'query_result' => $stmt->fetch(PDO::FETCH_ASSOC),
+            'row_count' => $stmt->rowCount()
+        ]);
     
         if ($stmt->rowCount() == 1) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -67,8 +76,8 @@ class UserLogin {
             echo "<script>alert('User not found.');</script>";
             return false;
         }
-    }    
-
+    }
+      
     public function logOut() {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();

@@ -1,5 +1,11 @@
 <?php include_once('asset/header.php'); ?>
 <?php include_once('asset/nav.php'); ?>
+
+<?php 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    var_dump($_POST); // ดูข้อมูลที่ส่งมาจากฟอร์ม
+}?>
+
 <link rel="stylesheet" href="page/style_sign.css">
 
 <div class="container">
