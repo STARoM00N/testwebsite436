@@ -61,7 +61,7 @@ class UserRegister {
                   VALUES (:username, :email, :password, :fname, :lname)";
         $stmt = $this->conn->prepare($query);
     
-        $hashedPassword = password_hash($this->password, PASSWORD_BCRYPT);
+        $hashedPassword = password_hash($_POST['password'], PASSWORD_BCRYPT);
     
         // Debug การสร้าง Hash
         error_log("Original password: {$this->password}");
