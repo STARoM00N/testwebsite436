@@ -2,7 +2,6 @@
 ob_start();
 include_once('config/Database.php');
 include_once('class/UserLogin.php');
-include_once('class/Utils.php');
 
 // เชื่อมต่อฐานข้อมูล
 $connectDB = new Database();
@@ -10,56 +9,51 @@ $db = $connectDB->getConnection();
 
 // สร้าง Object UserLogin
 $user = new UserLogin($db);
-$bs = new Bootstrap();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!isset($_POST['username']) || !isset($_POST['password'])) {
-        $bs->DisplayAlert("Please enter both username and password.", "danger");
+    $user->setUsername($_POST['username']);
+    $user->setPassword($_POST['password']);
+
+    // เรียกใช้งานฟังก์ชัน login
+    if ($user->login()) {
+        // ล็อกอินสำเร็จ
+        header("Location: mail.php");
+        exit;
     } else {
-        // รับค่าจากฟอร์ม
-        $user->setUsername($_POST['username']);
-        $user->setPassword($_POST['password']);
-
-        // เพิ่ม Debug Log
-        error_log("Login process initiated. Username: {$_POST['username']}, Password: {$_POST['password']}");
-
-        if ($user->emailNotExists()) {
-            error_log("User not found: {$_POST['username']}");
-            $bs->DisplayAlert("User not found. Please check your Username or Password.", "danger");
-        } else {
-            $verifyResult = $user->login();
-            error_log("Password verification result: " . ($verifyResult ? 'true' : 'false'));
-
-            if ($verifyResult === true) {
-                error_log("Login successful for user: {$_POST['username']}");
-                header("Location: mail.php");
-                exit;
-            } else {
-                error_log("Incorrect password for user: {$_POST['username']}");
-                $bs->DisplayAlert("Incorrect password. Please try again.", "danger");
-            }
-        }
+        // ล็อกอินไม่สำเร็จ
+        echo "<div class='alert alert-danger' role='alert'>Incorrect username or password. Please try again.</div>";
     }
 }
 
 ob_end_flush();
 ?>
 
-<div class="container">
-    <h3 class="my-3">Login Page</h3>
-    <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" name="username" id="username" class="form-control" placeholder="Enter your username" required>
-        </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password" required>
-        </div>
-        <div class="mb-3">
-            <a href="index.php" class="btn btn-secondary">Go Back</a>
-            <button type="submit" class="btn btn-primary">Sign In</button>
-        </div>
-        <p class="mt-3">No account? <a href="signup.php">Create one!</a></p>
-    </form>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="page/style_sign.css">
+</head>
+<body>
+    <div class="container">
+        <h3 class="my-3">Login Page</h3>
+        <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" name="username" id="username" class="form-control" placeholder="Enter your username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password" required>
+            </div>
+            <div class="mb-3">
+                <a href="index.php" class="btn btn-secondary">Go Back</a>
+                <button type="submit" class="btn btn-primary">Sign In</button>
+            </div>
+            <p class="mt-3">No account? <a href="signup.php">Create one!</a></p>
+        </form>
+    </div>
+</body>
+</html>

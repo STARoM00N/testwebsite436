@@ -1,23 +1,19 @@
 <?php
 class Database {
-    private $host = "tcp:prohectcs436database.database.windows.net,1433"; // Azure SQL Server Host
-    private $db = "ProjectCS436"; // Database Name
-    private $username = "projectcs436"; // Database Username
-    private $password = ".cs436team"; // Database Password
+    private $host = "tcp:prohectcs436database.database.windows.net,1433"; // เปลี่ยนเป็น Host ของ Azure
+    private $db_name = "ProjectCS436"; // ชื่อฐานข้อมูล
+    private $username = "projectcs436"; // Username
+    private $password = ".cs436team"; // Password
     public $conn;
 
     public function getConnection() {
         $this->conn = null;
 
         try {
-            $dsn = "sqlsrv:server=$this->host;database=$this->db";
-            $this->conn = new PDO($dsn, $this->username, $this->password);
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->conn->setAttribute(PDO::SQLSRV_ATTR_DIRECT_QUERY, true); // รองรับ rowCount
-            echo "Database connected successfully."; // Debugging
-        } catch (PDOException $e) {
-            echo "Connection Error: " . $e->getMessage();
-            die();
+            $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->db_name, $this->username, $this->password);
+            $this->conn->exec("set names utf8");
+        } catch (PDOException $exception) {
+            echo "Connection error: " . $exception->getMessage();
         }
 
         return $this->conn;
