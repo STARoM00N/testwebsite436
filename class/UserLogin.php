@@ -1,5 +1,4 @@
 <?php
-
 class UserLogin {
     private $conn;
     private $table_name = "users";
@@ -25,25 +24,24 @@ class UserLogin {
         $stmt->bindParam(":username", $this->username);
 
         if (!$stmt->execute()) {
-            error_log(json_encode($stmt->errorInfo())); // Log SQL Error
-            return false;
+            error_log("Query failed: " . json_encode($stmt->errorInfo()));
+            die("Database query failed!");
         }
 
-        if ($stmt->rowCount() > 0) {
+        if ($stmt->rowCount() === 1) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $hashedPassword = $row['password'];
 
-            // ตรวจสอบรหัสผ่าน
             if (password_verify($this->password, $hashedPassword)) {
                 session_start();
                 $_SESSION['userid'] = $row['id'];
                 return true;
             } else {
-                return false; // รหัสผ่านไม่ถูกต้อง
+                error_log("Password verification failed for user {$this->username}");
+                return false;
             }
-        } else {
-            return false; // ไม่มี Username นี้ในระบบ
         }
+        return false;
     }
 }
 ?>
