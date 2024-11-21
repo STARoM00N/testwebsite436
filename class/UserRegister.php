@@ -57,18 +57,22 @@ class UserRegister {
         }
     
         $query = "INSERT INTO {$this->table_name} 
-          (Username, Email, Password, FirstName, LastName) 
-          VALUES (:username, :email, :password, :fname, :lname)";
+                  (Username, Email, Password, FirstName, LastName) 
+                  VALUES (:username, :email, :password, :fname, :lname)";
         $stmt = $this->conn->prepare($query);
     
-        $hashedPassword = password_hash($this->password, PASSWORD_DEFAULT);
+        $hashedPassword = password_hash($this->password, PASSWORD_BCRYPT);
+    
+        // Debug การสร้าง Hash
+        error_log("Original password: {$this->password}");
+        error_log("Hashed password: $hashedPassword");
     
         $stmt->bindParam(":username", $this->username);
         $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":password", $hashedPassword);
         $stmt->bindParam(":fname", $this->fname);
         $stmt->bindParam(":lname", $this->lname);
-
+    
         try {
             if ($stmt->execute()) {
                 echo "<script>alert('User created successfully! Redirecting to login page...');</script>";
@@ -81,7 +85,7 @@ class UserRegister {
             echo "<div class='alert alert-danger' role='alert'>Failed to create user: {$e->getMessage()}</div>";
         }
     }
-
+    
     public function checkEmail() {
         $query = "SELECT TOP 1 * FROM {$this->table_name} WHERE email = :email";
         $stmt = $this->conn->prepare($query);

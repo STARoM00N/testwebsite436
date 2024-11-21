@@ -39,27 +39,25 @@ class UserLogin {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-
+    
         $query = "SELECT id, password FROM {$this->table_name} WHERE username = :username";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
-
+    
         if (!$stmt->execute()) {
             error_log(json_encode($stmt->errorInfo())); // Log SQL Error
             die("Query failed.");
         }
-
+    
         if ($stmt->rowCount() == 1) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $hashedPassword = $row['password'];
-
-            // Debug ข้อมูลสำหรับ password_verify
-            error_log(json_encode([
-                'input_password' => $this->password,
-                'hashed_password' => $hashedPassword,
-                'password_verify' => password_verify($this->password, $hashedPassword)
-            ]));
-
+    
+            // Debugging ขั้นตอนตรวจสอบรหัสผ่าน
+            error_log("Input password: {$this->password}");
+            error_log("Hashed password from DB: {$hashedPassword}");
+            error_log("Password verify result: " . (password_verify($this->password, $hashedPassword) ? 'true' : 'false'));
+    
             if (password_verify($this->password, $hashedPassword)) {
                 $_SESSION['userid'] = $row['id'];
                 return true;
@@ -69,7 +67,7 @@ class UserLogin {
         } else {
             return false; // ผู้ใช้ไม่พบ
         }
-    }
+    }      
 
     public function logOut() {
         if (session_status() === PHP_SESSION_NONE) {

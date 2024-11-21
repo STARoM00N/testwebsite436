@@ -13,34 +13,30 @@ $user = new UserLogin($db);
 $bs = new Bootstrap();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // ตรวจสอบว่ามีการส่ง username และ password มาหรือไม่
     if (!isset($_POST['username']) || !isset($_POST['password'])) {
         $bs->DisplayAlert("Please enter both username and password.", "danger");
     } else {
-        // รับค่าจากฟอร์ม
         $user->setUsername($_POST['username']);
         $user->setPassword($_POST['password']);
 
-        // Debug ข้อมูล username และ password ที่รับมา
-        error_log(json_encode(['username' => $_POST['username'], 'password' => $_POST['password']]));
+        error_log("Login process initiated. Username: {$_POST['username']}");
 
-        // ตรวจสอบว่าผู้ใช้มีอยู่หรือไม่
         if ($user->emailNotExists()) {
             $bs->DisplayAlert("User not found. Please check your Username or Password.", "danger");
         } else {
-            // ตรวจสอบรหัสผ่าน
             $verifyResult = $user->verifyPassword();
+            error_log("Password verification result: " . ($verifyResult ? 'true' : 'false'));
+
             if ($verifyResult === true) {
-                // ล็อกอินสำเร็จ
                 header("Location: mail.php");
                 exit;
             } else {
-                // รหัสผ่านผิด
                 $bs->DisplayAlert("Incorrect password. Please try again.", "danger");
             }
         }
     }
 }
+
 ob_end_flush();
 ?>
 

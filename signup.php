@@ -59,7 +59,9 @@ function validateSignupForm() {
                 $user->setFName($_POST['first_name']);
                 $user->setLName($_POST['last_name']);
                 $user->setEmail($_POST['email']);
-
+            
+                error_log("Signup process initiated. Username: {$_POST['username']} Email: {$_POST['email']}");
+            
                 if (!$user->checkEmail()) {
                     $bs->DisplayAlert("This email is already registered. Please try another.", "danger");
                 } elseif (!$user->validatePassword()) {
@@ -72,6 +74,7 @@ function validateSignupForm() {
                     $bs->DisplayAlert("Failed to create user. Please check your input or try again later.", "danger");
                 }
             }
+            
         ?>
 
         <form name="signupForm" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'])?>" method="POST" onsubmit="return validateSignupForm()">
