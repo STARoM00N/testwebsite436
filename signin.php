@@ -20,14 +20,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user->setUsername($_POST['username']);
         $user->setPassword($_POST['password']);
 
-        // Debugging
+        // เพิ่ม Debug Log
         error_log("Login process initiated. Username: {$_POST['username']}, Password: {$_POST['password']}");
 
-        if ($user->login()) {
-            header("Location: mail.php");
-            exit;
+        if ($user->emailNotExists()) {
+            error_log("User not found: {$_POST['username']}");
+            $bs->DisplayAlert("User not found. Please check your Username or Password.", "danger");
         } else {
-            $bs->DisplayAlert("Incorrect username or password. Please try again.", "danger");
+            $verifyResult = $user->login();
+            error_log("Password verification result: " . ($verifyResult ? 'true' : 'false'));
+
+            if ($verifyResult === true) {
+                error_log("Login successful for user: {$_POST['username']}");
+                header("Location: mail.php");
+                exit;
+            } else {
+                error_log("Incorrect password for user: {$_POST['username']}");
+                $bs->DisplayAlert("Incorrect password. Please try again.", "danger");
+            }
         }
     }
 }
