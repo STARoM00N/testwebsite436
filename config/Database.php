@@ -1,6 +1,6 @@
 <?php
 class Database {
-    private $host = "prohectcs436database.database.windows.net"; 
+    private $host = "tcp:prohectcs436database.database.windows.net";
     private $db_name = "ProjectCS436";
     private $username = "projectcs436";
     private $password = ".cs436team";

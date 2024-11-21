@@ -51,41 +51,26 @@ class UserRegister {
     }
 
     public function createUser() {
-        if (!$this->validateUserInput()) {
-            echo "<script>alert('Validation failed. Check your input values.');</script>";
-            return false;
-        }
-    
-        $query = "INSERT INTO {$this->table_name} 
-          (Username, Email, Password, FirstName, LastName) 
-          VALUES (:username, :email, :password, :fname, :lname)";
+        $query = "INSERT INTO {$this->table_name} (username, email, password, firstname, lastname) 
+                  VALUES (:username, :email, :password, :firstname, :lastname)";
         $stmt = $this->conn->prepare($query);
     
-        // สร้าง Hash จากรหัสผ่าน
         $hashedPassword = password_hash($this->password, PASSWORD_BCRYPT);
     
-        // Debugging Hash
-        error_log("Original password: {$this->password}");
-        error_log("Hashed password on signup: {$hashedPassword}");
-    
-        $stmt->bindParam(":username", $this->username);
-        $stmt->bindParam(":email", $this->email);
-        $stmt->bindParam(":password", $hashedPassword);
-        $stmt->bindParam(":fname", $this->fname);
-        $stmt->bindParam(":lname", $this->lname);
+        $stmt->bindParam(':username', $this->username);
+        $stmt->bindParam(':email', $this->email);
+        $stmt->bindParam(':password', $hashedPassword);
+        $stmt->bindParam(':firstname', $this->firstname);
+        $stmt->bindParam(':lastname', $this->lastname);
     
         try {
-            if ($stmt->execute()) {
-                echo "<script>alert('User created successfully! Redirecting to login page...');</script>";
-                echo "<script>window.location.href = 'signin.php';</script>";
-                exit;
-            } else {
-                throw new Exception("Unable to execute query");
-            }
+            return $stmt->execute();
         } catch (PDOException $e) {
-            echo "<div class='alert alert-danger' role='alert'>Failed to create user: {$e->getMessage()}</div>";
+            error_log("Insert error: " . $e->getMessage());
+            return false;
         }
-    }    
+    }
+       
     
     public function checkEmail() {
         $query = "SELECT TOP 1 * FROM {$this->table_name} WHERE email = :email";
