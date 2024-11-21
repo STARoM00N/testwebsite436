@@ -39,21 +39,21 @@ class UserLogin {
         $query = "SELECT id, password FROM {$this->table_name} WHERE username = :username";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
-
+    
         if (!$stmt->execute()) {
             error_log(json_encode($stmt->errorInfo())); // Log SQL Error
             die("Query failed.");
         }
-
+    
         if ($stmt->rowCount() == 1) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $hashedPassword = $row['password'];
-
-            // Debug hashed password
-            error_log("Input password: " . $this->password);
-            error_log("Hashed password from DB: " . $hashedPassword);
-            error_log("Password verify result: " . (password_verify($this->password, $hashedPassword) ? 'true' : 'false'));
-
+    
+            // Debugging Passwords
+            error_log("Original password: {$this->password}");
+            error_log("Hashed password from DB: {$hashedPassword}");
+            error_log("Password verification result: " . (password_verify($this->password, $hashedPassword) ? 'true' : 'false'));
+    
             if (password_verify($this->password, $hashedPassword)) {
                 session_start();
                 $_SESSION['userid'] = $row['id'];
@@ -64,7 +64,7 @@ class UserLogin {
         } else {
             return false; // ไม่มี Username นี้ในระบบ
         }
-    }
+    }    
 }
 
 ?>

@@ -57,15 +57,16 @@ class UserRegister {
         }
     
         $query = "INSERT INTO {$this->table_name} 
-                  (Username, Email, Password, FirstName, LastName) 
-                  VALUES (:username, :email, :password, :fname, :lname)";
+          (Username, Email, Password, FirstName, LastName) 
+          VALUES (:username, :email, :password, :fname, :lname)";
         $stmt = $this->conn->prepare($query);
     
-        $hashedPassword = password_hash($_POST['password'], PASSWORD_BCRYPT);
+        // สร้าง Hash จากรหัสผ่าน
+        $hashedPassword = password_hash($this->password, PASSWORD_BCRYPT);
     
-        // Debug การสร้าง Hash
+        // Debugging Hash
         error_log("Original password: {$this->password}");
-        error_log("Hashed password on signup: $hashedPassword");
+        error_log("Hashed password on signup: {$hashedPassword}");
     
         $stmt->bindParam(":username", $this->username);
         $stmt->bindParam(":email", $this->email);
@@ -84,7 +85,7 @@ class UserRegister {
         } catch (PDOException $e) {
             echo "<div class='alert alert-danger' role='alert'>Failed to create user: {$e->getMessage()}</div>";
         }
-    }
+    }    
     
     public function checkEmail() {
         $query = "SELECT TOP 1 * FROM {$this->table_name} WHERE email = :email";
