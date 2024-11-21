@@ -29,6 +29,7 @@ class UserLogin {
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 $hashedPassword = $row['password'];
 
+                // Debugging Password Comparison
                 error_log("Input Password: {$this->password}");
                 error_log("Hashed Password from DB: {$hashedPassword}");
 
@@ -37,12 +38,13 @@ class UserLogin {
                     $_SESSION['userid'] = $row['id'];
                     return true;
                 } else {
-                    error_log("Incorrect password for user: {$this->username}");
+                    error_log("Password did not match for user: {$this->username}");
                     return false;
                 }
+            } else {
+                error_log("User not found: {$this->username}");
+                return false;
             }
-            error_log("User not found: {$this->username}");
-            return false;
         } catch (PDOException $e) {
             error_log("Query error: " . $e->getMessage());
             return false;
