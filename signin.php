@@ -11,22 +11,28 @@ $user = new UserLogin($db);
 $bs = new Bootstrap();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Debugging data from form
-    var_dump($_POST);
-
-    $user->setUsername($_POST['username']);
-    $user->setPassword($_POST['password']);
-
-    if ($user->emailNotExists()) {
-        $bs->DisplayAlert("User not found. Please check your Username or Password.", "danger");
+    // ตรวจสอบว่า POST มีค่าหรือไม่
+    if (!isset($_POST['username']) || !isset($_POST['password'])) {
+        $bs->DisplayAlert("Please enter both username and password.", "danger");
     } else {
-        $verifyResult = $user->verifyPassword();
-        if ($verifyResult === true) {
-            echo "<script>alert('Login successful! Redirecting to the dashboard...');</script>";
-            echo "<script>window.location.href = 'mail.php';</script>";
-            exit;
+        // รับค่าจากฟอร์ม
+        $user->setUsername($_POST['username']);
+        $user->setPassword($_POST['password']);
+
+        // ตรวจสอบว่าผู้ใช้มีอยู่หรือไม่
+        if ($user->emailNotExists()) {
+            $bs->DisplayAlert("User not found. Please check your Username or Password.", "danger");
         } else {
-            $bs->DisplayAlert("Incorrect password. Please try again.", "danger");
+            // ตรวจสอบรหัสผ่าน
+            $verifyResult = $user->verifyPassword();
+            if ($verifyResult === true) {
+                // ล็อกอินสำเร็จ
+                header("Location: mail.php");
+                exit;
+            } else {
+                // รหัสผ่านผิด
+                $bs->DisplayAlert("Incorrect password. Please try again.", "danger");
+            }
         }
     }
 }

@@ -24,19 +24,16 @@ class UserLogin {
         $stmt->bindParam(":username", $this->username);
     
         if (!$stmt->execute()) {
-            var_dump($stmt->errorInfo()); // Debug SQL Error
+            error_log(json_encode($stmt->errorInfo())); // Log SQL Error
             die("Query failed.");
         }
     
         $rowCount = $stmt->rowCount();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC); // ดึงข้อมูลเพื่อ Debug
-        var_dump(['username' => $this->username, 'row_count' => $rowCount, 'result' => $result]);
-    
         return $rowCount == 0; // ถ้าไม่มีผลลัพธ์ -> username ไม่พบ
     }
 
     public function verifyPassword() {
-        if (session_status() == PHP_SESSION_NONE) {
+        if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
     
@@ -45,7 +42,7 @@ class UserLogin {
         $stmt->bindParam(":username", $this->username);
     
         if (!$stmt->execute()) {
-            var_dump($stmt->errorInfo()); // Debug SQL Error
+            error_log(json_encode($stmt->errorInfo())); // Log SQL Error
             die("Query failed.");
         }
     
@@ -53,24 +50,14 @@ class UserLogin {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $hashedPassword = $row['password'];
     
-            // Debugging
-            var_dump([
-                'username' => $this->username,
-                'input_password' => $this->password,
-                'hashed_password' => $hashedPassword,
-                'password_verify' => password_verify($this->password, $hashedPassword)
-            ]);
-    
             if (password_verify($this->password, $hashedPassword)) {
                 $_SESSION['userid'] = $row['id'];
                 return true;
             } else {
-                echo "<script>alert('Incorrect password.');</script>";
-                return false;
+                return false; // รหัสผ่านไม่ถูกต้อง
             }
         } else {
-            echo "<script>alert('User not found.');</script>";
-            return false;
+            return false; // ผู้ใช้ไม่พบ
         }
     }    
 
@@ -84,5 +71,4 @@ class UserLogin {
         exit;
     }
 }
-
 ?>
