@@ -14,11 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_POST['username']) || !isset($_POST['password'])) {
         echo "<div style='color:red;'>Please enter both username and password.</div>";
     } else {
-        // รับค่าจากฟอร์ม
         $user->setUsername($_POST['username']);
         $user->setPassword($_POST['password']);
-
-        error_log("Login process initiated. Username: {$_POST['username']}, Password: {$_POST['password']}");
 
         if ($user->login()) {
             header("Location: mail.php");

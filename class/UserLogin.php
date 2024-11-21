@@ -22,23 +22,23 @@ class UserLogin {
         $query = "SELECT id, password FROM {$this->table_name} WHERE username = :username";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
-
+    
         try {
             $stmt->execute();
+            error_log("Query executed: SELECT id, password FROM {$this->table_name} WHERE username = {$this->username}");
+    
             if ($stmt->rowCount() === 1) {
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 $hashedPassword = $row['password'];
-
-                // Debugging Password Comparison
-                error_log("Input Password: {$this->password}");
                 error_log("Hashed Password from DB: {$hashedPassword}");
-
+                
                 if (password_verify($this->password, $hashedPassword)) {
                     session_start();
                     $_SESSION['userid'] = $row['id'];
+                    error_log("Password verification success for user: {$this->username}");
                     return true;
                 } else {
-                    error_log("Password did not match for user: {$this->username}");
+                    error_log("Password verification failed for user: {$this->username}");
                     return false;
                 }
             } else {
@@ -50,5 +50,6 @@ class UserLogin {
             return false;
         }
     }
+    
 }
 ?>
