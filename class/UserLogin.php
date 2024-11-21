@@ -18,36 +18,46 @@ class UserLogin {
         $this->password = trim($password);
     }
 
-    public function login() {
+    public function emailNotExists() {
+        $query = "SELECT id FROM {$this->table_name} WHERE username = :username";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":username", $this->username);
+
+        if (!$stmt->execute()) {
+            error_log(json_encode($stmt->errorInfo())); // Log SQL Error
+            die("Query failed.");
+        }
+
+        $rowCount = $stmt->rowCount();
+        return $rowCount == 0; // ถ้าไม่มีผลลัพธ์ -> username ไม่พบ
+    }
+
+    public function verifyPassword() {
         $query = "SELECT id, password FROM {$this->table_name} WHERE username = :username";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
 
-        try {
-            $stmt->execute();
-            error_log("Query executed: SELECT id, password FROM {$this->table_name} WHERE username = {$this->username}");
+        if (!$stmt->execute()) {
+            error_log(json_encode($stmt->errorInfo())); // Log SQL Error
+            die("Query failed.");
+        }
 
-            if ($stmt->rowCount() === 1) {
-                $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                $hashedPassword = $row['password'];
-                error_log("Hashed Password from DB: {$hashedPassword}");
+        if ($stmt->rowCount() == 1) {
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $hashedPassword = $row['password'];
 
-                if (password_verify($this->password, $hashedPassword)) {
-                    session_start();
-                    $_SESSION['userid'] = $row['id'];
-                    error_log("Password verification success for user: {$this->username}");
-                    return true;
-                } else {
-                    error_log("Password verification failed for user: {$this->username}");
-                    return false;
-                }
+            error_log("Input password: {$this->password}");
+            error_log("Hashed password from DB: {$hashedPassword}");
+
+            // Debugging password_verify
+            if (password_verify($this->password, $hashedPassword)) {
+                $_SESSION['userid'] = $row['id'];
+                return true;
             } else {
-                error_log("User not found: {$this->username}");
-                return false;
+                return false; // รหัสผ่านไม่ถูกต้อง
             }
-        } catch (PDOException $e) {
-            error_log("Query error: " . $e->getMessage());
-            return false;
+        } else {
+            return false; // ผู้ใช้ไม่พบ
         }
     }
 }
