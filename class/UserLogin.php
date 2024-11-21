@@ -57,12 +57,13 @@ class UserLogin {
             error_log("Input password: {$this->password}");
             error_log("Hashed password from DB: {$hashedPassword}");
             error_log("Password verify result: " . (password_verify($this->password, $hashedPassword) ? 'true' : 'false'));
-    
-            if (password_verify($this->password, $hashedPassword)) {
-                $_SESSION['userid'] = $row['id'];
-                return true;
+            
+            $storedPassword = '$2y$10$QGdzfZc51GM4lgCfyKuFuz2OZLvjkPx8bVTpONwL1Ho0B1R1pFcFe'; // ค่าจริงจากฐานข้อมูล (ตัวอย่าง)
+            $inputPassword = '111111'; // รหัสผ่านที่ผู้ใช้กรอก
+            if (password_verify($inputPassword, $storedPassword)) {
+                echo 'Password matched!';
             } else {
-                return false; // รหัสผ่านไม่ถูกต้อง
+                echo 'Password did not match!';
             }
         } else {
             return false; // ผู้ใช้ไม่พบ
