@@ -65,7 +65,7 @@ class UserRegister {
     
         // Debug การสร้าง Hash
         error_log("Original password: {$this->password}");
-        error_log("Hashed password: $hashedPassword");
+        error_log("Hashed password on signup: $hashedPassword");
     
         $stmt->bindParam(":username", $this->username);
         $stmt->bindParam(":email", $this->email);

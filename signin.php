@@ -16,10 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_POST['username']) || !isset($_POST['password'])) {
         $bs->DisplayAlert("Please enter both username and password.", "danger");
     } else {
+        // รับค่าจากฟอร์ม
         $user->setUsername($_POST['username']);
         $user->setPassword($_POST['password']);
 
-        error_log("Login process initiated. Username: {$_POST['username']}");
+        error_log("Login process initiated. Username: {$_POST['username']}, Password: {$_POST['password']}");
 
         if ($user->emailNotExists()) {
             $bs->DisplayAlert("User not found. Please check your Username or Password.", "danger");

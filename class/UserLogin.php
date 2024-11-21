@@ -40,6 +40,7 @@ class UserLogin {
             session_start();
         }
     
+        // Query เพื่อดึง id และ password จากฐานข้อมูล
         $query = "SELECT id, password FROM {$this->table_name} WHERE username = :username";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
@@ -50,6 +51,7 @@ class UserLogin {
         }
     
         if ($stmt->rowCount() == 1) {
+            // ดึงข้อมูลผู้ใช้
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $hashedPassword = $row['password'];
     
@@ -67,7 +69,7 @@ class UserLogin {
         } else {
             return false; // ผู้ใช้ไม่พบ
         }
-    }      
+    }   
 
     public function logOut() {
         if (session_status() === PHP_SESSION_NONE) {
