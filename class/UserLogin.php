@@ -24,25 +24,39 @@ class UserLogin {
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
 
+        // Execute query
         if (!$stmt->execute()) {
             error_log(json_encode($stmt->errorInfo())); // Log SQL Error
             die("Query failed.");
         }
 
+        // Check if username exists
         if ($stmt->rowCount() == 1) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $hashedPassword = $row['password'];
 
-            // ตรวจสอบรหัสผ่าน
+            // Debugging
+            error_log("Input password: {$this->password}");
+            error_log("Hashed password: {$hashedPassword}");
+
+            // Verify password
             if (password_verify($this->password, $hashedPassword)) {
-                session_start();
+                // Start session if not already started
+                if (session_status() == PHP_SESSION_NONE) {
+                    session_start();
+                }
+
+                // Set session and return success
                 $_SESSION['userid'] = $row['id'];
+                error_log("Login successful for user: {$this->username}");
                 return true;
             } else {
-                return false; // รหัสผ่านไม่ถูกต้อง
+                error_log("Password did not match for user: {$this->username}");
+                return false; // Incorrect password
             }
         } else {
-            return false; // ไม่มี Username นี้ในระบบ
+            error_log("User not found: {$this->username}");
+            return false; // Username not found
         }
     }
 }

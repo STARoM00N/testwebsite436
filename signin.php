@@ -20,30 +20,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user->setUsername($_POST['username']);
         $user->setPassword($_POST['password']);
 
-        // Debugging การเริ่มต้นกระบวนการ Login
         error_log("Login process initiated. Username: {$_POST['username']}, Password: {$_POST['password']}");
 
-        if ($user->emailNotExists()) {
-            // Username ไม่พบในระบบ
-            $bs->DisplayAlert("User not found. Please check your Username or Password.", "danger");
-            error_log("User not found: {$_POST['username']}");
+        // เรียก login() และตรวจสอบผล
+        if ($user->login()) {
+            // Redirect to mail.php if login successful
+            header("Location: mail.php");
+            exit;
         } else {
-            // ตรวจสอบรหัสผ่าน
-            $verifyResult = $user->verifyPassword();
-
-            // Debugging ผลลัพธ์การตรวจสอบรหัสผ่าน
-            error_log("Password verification result: " . ($verifyResult ? 'true' : 'false'));
-
-            if ($verifyResult === true) {
-                // หาก Login สำเร็จ
-                error_log("Login successful. Redirecting to mail.php.");
-                header("Location: mail.php");
-                exit;
-            } else {
-                // รหัสผ่านไม่ถูกต้อง
-                $bs->DisplayAlert("Incorrect password. Please try again.", "danger");
-                error_log("Incorrect password for username: {$_POST['username']}");
-            }
+            $bs->DisplayAlert("Incorrect username or password. Please try again.", "danger");
         }
     }
 }
