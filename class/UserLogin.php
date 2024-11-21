@@ -22,13 +22,16 @@ class UserLogin {
         $query = "SELECT id FROM {$this->table_name} WHERE username = :username";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
-    
+
         if (!$stmt->execute()) {
             error_log(json_encode($stmt->errorInfo())); // Log SQL Error
             die("Query failed.");
         }
-    
+
         $rowCount = $stmt->rowCount();
+        // Debug ข้อมูล username และจำนวนแถว
+        error_log(json_encode(['username' => $this->username, 'row_count' => $rowCount]));
+
         return $rowCount == 0; // ถ้าไม่มีผลลัพธ์ -> username ไม่พบ
     }
 
@@ -36,20 +39,27 @@ class UserLogin {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-    
+
         $query = "SELECT id, password FROM {$this->table_name} WHERE username = :username";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":username", $this->username);
-    
+
         if (!$stmt->execute()) {
             error_log(json_encode($stmt->errorInfo())); // Log SQL Error
             die("Query failed.");
         }
-    
+
         if ($stmt->rowCount() == 1) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $hashedPassword = $row['password'];
-    
+
+            // Debug ข้อมูลสำหรับ password_verify
+            error_log(json_encode([
+                'input_password' => $this->password,
+                'hashed_password' => $hashedPassword,
+                'password_verify' => password_verify($this->password, $hashedPassword)
+            ]));
+
             if (password_verify($this->password, $hashedPassword)) {
                 $_SESSION['userid'] = $row['id'];
                 return true;
@@ -59,7 +69,7 @@ class UserLogin {
         } else {
             return false; // ผู้ใช้ไม่พบ
         }
-    }    
+    }
 
     public function logOut() {
         if (session_status() === PHP_SESSION_NONE) {

@@ -4,20 +4,25 @@ include_once('config/Database.php');
 include_once('class/UserLogin.php');
 include_once('class/Utils.php');
 
+// เชื่อมต่อฐานข้อมูล
 $connectDB = new Database();
 $db = $connectDB->getConnection();
 
+// สร้าง Object UserLogin
 $user = new UserLogin($db);
 $bs = new Bootstrap();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // ตรวจสอบว่า POST มีค่าหรือไม่
+    // ตรวจสอบว่ามีการส่ง username และ password มาหรือไม่
     if (!isset($_POST['username']) || !isset($_POST['password'])) {
         $bs->DisplayAlert("Please enter both username and password.", "danger");
     } else {
         // รับค่าจากฟอร์ม
         $user->setUsername($_POST['username']);
         $user->setPassword($_POST['password']);
+
+        // Debug ข้อมูล username และ password ที่รับมา
+        error_log(json_encode(['username' => $_POST['username'], 'password' => $_POST['password']]));
 
         // ตรวจสอบว่าผู้ใช้มีอยู่หรือไม่
         if ($user->emailNotExists()) {
